@@ -60,3 +60,7 @@ export function updateAdminUser(id: number | string, payload: Partial<CreateAdmi
 export function deleteAdminUser(id: number | string): Promise<void> {
   return apiRequest<void>(`${requireUsersPath()}${id}/`, { method: 'DELETE' });
 }
+
+export function toggleAdminUserStatus(id: number | string): Promise<AdminUser> {
+  return apiRequest<AdminUser>(`${requireUsersPath()}${id}/toggle-status/`, { method: 'PATCH' });
+}

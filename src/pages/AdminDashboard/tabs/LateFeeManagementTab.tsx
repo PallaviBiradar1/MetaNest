@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
@@ -11,22 +11,22 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
-
-const HISTORY = [
-  { flat: 'A-003', resident: 'Deepak Malhotra', month: 'Jun-2024', principal: 3500, lateFee: 500, waived: 0, total: 4000 },
-  { flat: 'B-003', resident: 'Rajiv Kapoor', month: 'Jun-2024', principal: 3500, lateFee: 500, waived: 0, total: 4000 },
-  { flat: 'C-003', resident: 'Rekha Menon', month: 'May-2024', principal: 3500, lateFee: 1000, waived: 500, total: 4000 },
-];
+import { listLateFeeHistory, type LateFeeHistory } from '../../../services/financeService';
 
 function LateFeeManagementTab() {
   const [tab, setTab] = useState<'rules' | 'history'>('rules');
+  const [history, setHistory] = useState<LateFeeHistory[]>([]);
 
-  const rows = useMemo(() => HISTORY, []);
+  useEffect(() => {
+    listLateFeeHistory().then(setHistory).catch(() => setHistory([]));
+  }, []);
+
+  const rows = useMemo(() => history, [history]);
 
   return (
     <Stack spacing={2.5} sx={{ minHeight: 560 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, mt: 0.5 }}>
-        <Typography sx={{ fontSize: '2.35rem', fontWeight: 800, letterSpacing: '-0.04em', color: '#2d2f38', lineHeight: 1.1 }}>
+        <Typography sx={{ fontSize: '1.4rem', fontWeight: 800, color: '#2d2f38', lineHeight: 1.2 }}>
           Late Fee Management
         </Typography>
       </Box>
@@ -131,9 +131,9 @@ function LateFeeManagementTab() {
             <Table>
               <TableHead>
                 <TableRow sx={{ bgcolor: 'rgba(148, 163, 184, 0.08)' }}>
-                  <TableCell sx={{ fontSize: '0.77rem', fontWeight: 800, color: '#5d6676', letterSpacing: '0.08em', textTransform: 'uppercase', py: 1.7 }}>Flat</TableCell>
-                  <TableCell sx={{ fontSize: '0.77rem', fontWeight: 800, color: '#5d6676', letterSpacing: '0.08em', textTransform: 'uppercase', py: 1.7 }}>Resident</TableCell>
-                  <TableCell sx={{ fontSize: '0.77rem', fontWeight: 800, color: '#5d6676', letterSpacing: '0.08em', textTransform: 'uppercase', py: 1.7 }}>Month</TableCell>
+                  <TableCell sx={{ fontSize: '0.77rem', fontWeight: 800, color: '#5d6676', letterSpacing: '0.08em', textTransform: 'uppercase', py: 1.7 }}>Bill</TableCell>
+                  <TableCell sx={{ fontSize: '0.77rem', fontWeight: 800, color: '#5d6676', letterSpacing: '0.08em', textTransform: 'uppercase', py: 1.7 }}>Status</TableCell>
+                  <TableCell sx={{ fontSize: '0.77rem', fontWeight: 800, color: '#5d6676', letterSpacing: '0.08em', textTransform: 'uppercase', py: 1.7 }}>Created</TableCell>
                   <TableCell sx={{ fontSize: '0.77rem', fontWeight: 800, color: '#5d6676', letterSpacing: '0.08em', textTransform: 'uppercase', py: 1.7 }}>Principal</TableCell>
                   <TableCell sx={{ fontSize: '0.77rem', fontWeight: 800, color: '#5d6676', letterSpacing: '0.08em', textTransform: 'uppercase', py: 1.7 }}>Late Fee</TableCell>
                   <TableCell sx={{ fontSize: '0.77rem', fontWeight: 800, color: '#5d6676', letterSpacing: '0.08em', textTransform: 'uppercase', py: 1.7 }}>Waived</TableCell>
@@ -143,16 +143,16 @@ function LateFeeManagementTab() {
               </TableHead>
               <TableBody>
                 {rows.map((row) => (
-                  <TableRow key={row.flat} sx={{ '&:last-child td, &:last-child th': { borderBottom: 0 } }}>
-                    <TableCell sx={{ fontSize: '1rem', color: '#1f2a37', py: 2.1 }}>{row.flat}</TableCell>
-                    <TableCell sx={{ fontSize: '1rem', color: '#1f2a37', py: 2.1 }}>{row.resident}</TableCell>
-                    <TableCell sx={{ fontSize: '1rem', color: '#1f2a37', py: 2.1 }}>{row.month}</TableCell>
-                    <TableCell sx={{ fontSize: '1rem', color: '#1f2a37', py: 2.1 }}>₹{row.principal.toLocaleString('en-IN')}</TableCell>
-                    <TableCell sx={{ fontSize: '1rem', color: '#ef4444', fontWeight: 600, py: 2.1 }}>₹{row.lateFee.toLocaleString('en-IN')}</TableCell>
-                    <TableCell sx={{ fontSize: '1rem', color: row.waived > 0 ? '#16a34a' : '#64748b', py: 2.1, fontWeight: 600 }}>
-                      {row.waived > 0 ? `₹${row.waived.toLocaleString('en-IN')}` : '—'}
+                  <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { borderBottom: 0 } }}>
+                    <TableCell sx={{ fontSize: '1rem', color: '#1f2a37', py: 2.1 }}>{row.bill}</TableCell>
+                    <TableCell sx={{ fontSize: '1rem', color: '#1f2a37', py: 2.1 }}>{row.waived_at ? 'Waived' : 'Applied'}</TableCell>
+                    <TableCell sx={{ fontSize: '1rem', color: '#1f2a37', py: 2.1 }}>{new Date(row.created_at).toLocaleDateString()}</TableCell>
+                    <TableCell sx={{ fontSize: '1rem', color: '#1f2a37', py: 2.1 }}>₹{Number(row.principal_amount).toLocaleString('en-IN')}</TableCell>
+                    <TableCell sx={{ fontSize: '1rem', color: '#ef4444', fontWeight: 600, py: 2.1 }}>₹{Number(row.late_fee_amount).toLocaleString('en-IN')}</TableCell>
+                    <TableCell sx={{ fontSize: '1rem', color: Number(row.waived_amount) > 0 ? '#16a34a' : '#64748b', py: 2.1, fontWeight: 600 }}>
+                      {Number(row.waived_amount) > 0 ? `₹${Number(row.waived_amount).toLocaleString('en-IN')}` : '—'}
                     </TableCell>
-                    <TableCell sx={{ fontSize: '1rem', color: '#1f2a37', py: 2.1 }}>₹{row.total.toLocaleString('en-IN')}</TableCell>
+                    <TableCell sx={{ fontSize: '1rem', color: '#1f2a37', py: 2.1 }}>₹{Number(row.total_amount).toLocaleString('en-IN')}</TableCell>
                     <TableCell align="right" sx={{ py: 2.1 }}>
                       <Button
                         variant="outlined"

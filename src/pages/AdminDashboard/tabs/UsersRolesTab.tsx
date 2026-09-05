@@ -24,7 +24,7 @@ import Avatar from '@mui/material/Avatar';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import { createAdminUser, deleteAdminUser, listAdminUsers, type AdminRole, type AdminUser } from '../../../services/adminUsersService';
+import { createAdminUser, listAdminUsers, toggleAdminUserStatus, type AdminRole, type AdminUser } from '../../../services/adminUsersService';
 
 interface UserDraft {
   name: string;
@@ -185,7 +185,7 @@ function UsersRolesTab() {
   return (
     <Box sx={{ position: 'relative' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography sx={{ fontSize: '2.3rem', fontWeight: 800, letterSpacing: '-0.04em', color: '#2d2f38', lineHeight: 1.1 }}>
+        <Typography sx={{ fontSize: '1.4rem', fontWeight: 800, color: '#2d2f38', lineHeight: 1.2 }}>
           Users &amp; Roles
         </Typography>
 
@@ -292,23 +292,23 @@ function UsersRolesTab() {
 
                     <TableCell sx={{ py: 1.7, borderBottom: '1px solid rgba(148,163,184,0.18)' }}>
                       <Stack direction="row" spacing={0.5}>
-                        <IconButton size="small" sx={{ color: '#4a5366' }} aria-label="Edit user">
-                          <EditIcon sx={{ fontSize: 18 }} />
-                        </IconButton>
                         <IconButton
                           size="small"
                           sx={{ color: '#4a5366' }}
-                          aria-label="Delete user"
+                          aria-label={`Toggle ${status} user`}
                           onClick={async () => {
                             try {
-                              await deleteAdminUser(user.id);
-                              setUsers((current) => current.filter((item) => item.id !== user.id));
-                              setMessage('User deleted successfully.');
+                              const updated = await toggleAdminUserStatus(user.id);
+                              setUsers((current) => current.map((item) => item.id === user.id ? toTableUser(updated) : item));
+                              setMessage('User status updated.');
                             } catch (error) {
-                              setMessage(error instanceof Error ? error.message : 'Unable to delete user.');
+                              setMessage(error instanceof Error ? error.message : 'Unable to update user status.');
                             }
                           }}
                         >
+                          <EditIcon sx={{ fontSize: 18 }} />
+                        </IconButton>
+                        <IconButton size="small" sx={{ color: '#4a5366' }} aria-label="User deletion unavailable">
                           <DeleteOutlinedIcon sx={{ fontSize: 18 }} />
                         </IconButton>
                       </Stack>

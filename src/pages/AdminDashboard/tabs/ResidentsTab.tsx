@@ -113,7 +113,7 @@ function ResidentsTab() {
     <Stack spacing={2.5}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
-          <Typography variant="h2" sx={{ fontSize: '3.25rem', fontWeight: 800, letterSpacing: '-0.05em', color: '#2d3748', lineHeight: 1.1 }}>
+          <Typography variant="h5" sx={{ fontSize: '1.4rem', fontWeight: 800, color: '#2d3748', lineHeight: 1.2 }}>
             Resident Management
           </Typography>
           <Typography sx={{ mt: 1, color: '#697386', fontSize: '1.05rem' }}>{residents.length} registered</Typography>

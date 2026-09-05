@@ -100,7 +100,7 @@ function NotificationsTab() {
   return (
     <Box sx={{ position: 'relative' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
-        <Typography sx={{ fontSize: '2.3rem', fontWeight: 800, letterSpacing: '-0.04em', color: '#2d2f38', lineHeight: 1.1 }}>
+        <Typography sx={{ fontSize: '1.4rem', fontWeight: 800, color: '#2d2f38', lineHeight: 1.2 }}>
           Notifications
         </Typography>
 
