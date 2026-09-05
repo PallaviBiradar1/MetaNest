@@ -141,7 +141,21 @@ function AdminDashboard() {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#edf2f7' }}>
       <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-        <Box sx={{ width: 260, bgcolor: '#2c2c67', color: '#f3f4ff', display: 'flex', flexDirection: 'column', borderRight: '1px solid rgba(255,255,255,0.08)' }}>
+        <Box
+          sx={{
+            width: 260,
+            flexShrink: 0,
+            bgcolor: '#2c2c67',
+            color: '#f3f4ff',
+            display: 'flex',
+            flexDirection: 'column',
+            borderRight: '1px solid rgba(255,255,255,0.08)',
+            position: 'sticky',
+            top: 0,
+            height: '100vh',
+            alignSelf: 'flex-start',
+          }}
+        >
           <Box sx={{ px: 2.5, py: 2.5, display: 'flex', alignItems: 'center', gap: 1.5, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
             <IconButton onClick={() => navigate('/login', { replace: true })} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: '#fff', p: 1.15 }} aria-label="Back">
               <ArrowBackIcon sx={{ fontSize: 20 }} />
@@ -152,7 +166,7 @@ function AdminDashboard() {
             </Box>
           </Box>
 
-          <Box sx={{ px: 1.5, py: 1.5, overflowY: 'auto' }}>
+          <Box sx={{ px: 1.5, py: 1.5, overflowY: 'auto', flex: 1 }}>
             <List dense disablePadding>
               {NAV_SECTIONS.map((section) => (
                 <Box key={section.title} sx={{ mb: 1.5 }}>
